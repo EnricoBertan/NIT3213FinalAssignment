@@ -1,7 +1,7 @@
 package com.enrico.nit3213
 
 import com.enrico.nit3213.data.model.DashboardResponse
-import com.enrico.nit3213.domain.repository.DashboardRepository
+import com.enrico.nit3213.domain.usecase.GetDashboardUseCase
 import com.enrico.nit3213.ui.dashboard.DashboardViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -21,14 +21,14 @@ import org.junit.Test
 class DashboardViewModelTest {
 
     private lateinit var viewModel: DashboardViewModel
-    private lateinit var dashboardRepository: DashboardRepository
+    private lateinit var getDashboardUseCase: GetDashboardUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dashboardRepository = mockk()
-        viewModel = DashboardViewModel(dashboardRepository)
+        getDashboardUseCase = mockk()
+        viewModel = DashboardViewModel(getDashboardUseCase)
     }
 
     @After
@@ -42,8 +42,7 @@ class DashboardViewModelTest {
             mapOf("name" to "Earth", "type" to "Planet", "description" to "Our home"),
             mapOf("name" to "Mars", "type" to "Planet", "description" to "Red planet")
         )
-        coEvery { dashboardRepository.getDashboard(any()) } returns
-                DashboardResponse(entities, 2)
+        coEvery { getDashboardUseCase(any()) } returns DashboardResponse(entities, 2)
 
         viewModel.loadDashboard("planets")
         testDispatcher.scheduler.advanceUntilIdle()
@@ -55,7 +54,7 @@ class DashboardViewModelTest {
 
     @Test
     fun `loadDashboard failure updates state with error`() = runTest {
-        coEvery { dashboardRepository.getDashboard(any()) } throws Exception("Network error")
+        coEvery { getDashboardUseCase(any()) } throws Exception("Network error")
 
         viewModel.loadDashboard("planets")
         testDispatcher.scheduler.advanceUntilIdle()

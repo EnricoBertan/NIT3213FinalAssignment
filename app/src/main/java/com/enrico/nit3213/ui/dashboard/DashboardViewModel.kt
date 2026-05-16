@@ -2,7 +2,7 @@ package com.enrico.nit3213.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enrico.nit3213.domain.repository.DashboardRepository
+import com.enrico.nit3213.domain.usecase.GetDashboardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val dashboardRepository: DashboardRepository
+    private val getDashboardUseCase: GetDashboardUseCase
 ) : ViewModel() {
 
     sealed class DashboardState {
@@ -27,7 +27,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _dashboardState.value = DashboardState.Loading
             try {
-                val response = dashboardRepository.getDashboard(keypass)
+                val response = getDashboardUseCase(keypass)
                 _dashboardState.value = DashboardState.Success(
                     response.entities,
                     response.entityTotal

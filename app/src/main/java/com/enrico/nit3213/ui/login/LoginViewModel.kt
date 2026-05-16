@@ -2,7 +2,7 @@ package com.enrico.nit3213.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enrico.nit3213.domain.repository.AuthRepository
+import com.enrico.nit3213.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
     sealed class LoginState {
@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             try {
-                val response = authRepository.login(username, password)
+                val response = loginUseCase(username, password)
                 _loginState.value = LoginState.Success(response.keypass)
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error("Login failed. Check your credentials.")

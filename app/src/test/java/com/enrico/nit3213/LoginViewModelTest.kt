@@ -1,7 +1,7 @@
 package com.enrico.nit3213
 
 import com.enrico.nit3213.data.model.LoginResponse
-import com.enrico.nit3213.domain.repository.AuthRepository
+import com.enrico.nit3213.domain.usecase.LoginUseCase
 import com.enrico.nit3213.ui.login.LoginViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -21,14 +21,14 @@ import org.junit.Test
 class LoginViewModelTest {
 
     private lateinit var viewModel: LoginViewModel
-    private lateinit var authRepository: AuthRepository
+    private lateinit var loginUseCase: LoginUseCase
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        authRepository = mockk()
-        viewModel = LoginViewModel(authRepository)
+        loginUseCase = mockk()
+        viewModel = LoginViewModel(loginUseCase)
     }
 
     @After
@@ -52,7 +52,7 @@ class LoginViewModelTest {
 
     @Test
     fun `login success updates state with keypass`() = runTest {
-        coEvery { authRepository.login(any(), any()) } returns LoginResponse("planets")
+        coEvery { loginUseCase(any(), any()) } returns LoginResponse("planets")
         viewModel.login("s8164431", "Enrico")
         testDispatcher.scheduler.advanceUntilIdle()
         val state = viewModel.loginState.value
@@ -62,7 +62,7 @@ class LoginViewModelTest {
 
     @Test
     fun `login failure updates state with error`() = runTest {
-        coEvery { authRepository.login(any(), any()) } throws Exception("Unauthorized")
+        coEvery { loginUseCase(any(), any()) } throws Exception("Unauthorized")
         viewModel.login("s8164431", "Enrico")
         testDispatcher.scheduler.advanceUntilIdle()
         val state = viewModel.loginState.value
