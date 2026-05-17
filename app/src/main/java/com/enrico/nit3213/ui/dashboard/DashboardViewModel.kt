@@ -16,7 +16,7 @@ class DashboardViewModel @Inject constructor(
 
     sealed class DashboardState {
         object Loading : DashboardState()
-        data class Success(val entities: List<Map<String, String>>, val total: Int) : DashboardState()
+        data class Success(val entities: List<Map<String, Any>>, val total: Int) : DashboardState()
         data class Error(val message: String) : DashboardState()
     }
 

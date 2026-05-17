@@ -26,7 +26,7 @@ class DashboardFragment : Fragment() {
     private val viewModel: DashboardViewModel by viewModels()
     private lateinit var adapter: EntityAdapter
     private var keypass: String = ""
-    private var allEntities: List<Map<String, String>> = emptyList()
+    private var allEntities: List<Map<String, Any>> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -95,7 +95,9 @@ class DashboardFragment : Fragment() {
             adapter.submitList(allEntities)
         } else {
             val filtered = allEntities.filter { entity ->
-                entity.values.any { it.contains(query, ignoreCase = true) }
+                entity.values.any {
+                    it.toString().contains(query, ignoreCase = true)
+                }
             }
             adapter.submitList(filtered)
         }

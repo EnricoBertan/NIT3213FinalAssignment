@@ -34,8 +34,8 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val entityJson = arguments?.getString("entityJson") ?: ""
-        val type = object : TypeToken<Map<String, String>>() {}.type
-        val entity: Map<String, String> = Gson().fromJson(entityJson, type)
+        val type = object : TypeToken<Map<String, Any>>() {}.type
+        val entity: Map<String, Any> = Gson().fromJson(entityJson, type)
         viewModel.setEntity(entity)
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -47,17 +47,34 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun displayEntity(entity: Map<String, String>) {
+    private fun formatValue(value: Any): String {
+        return if (value is Double && value == value.toLong().toDouble()) {
+            value.toLong().toString()
+        } else {
+            value.toString()
+        }
+    }
+
+    private fun displayEntity(entity: Map<String, Any>) {
         val entries = entity.entries.toList()
 
-        binding.tvEntityTitle.text = entries.firstOrNull()?.value ?: "Details"
+        val titleEntry = entries.find { it.key == "event" }
+            ?: entries.find { it.key == "name" }
+            ?: entries.find { it.key == "title" }
+            ?: entries.firstOrNull()
 
-        val properties = entries.filter { it.key != "description" }.drop(1)
-        binding.tvProperties.text = properties.joinToString("\n") {
-            "${it.key.replaceFirstChar { c -> c.uppercase() }}: ${it.value}"
+        binding.tvEntityTitle.text = titleEntry?.value?.toString() ?: "Details"
+
+        val properties = entries.filter {
+            it.key != "description" && it.key != titleEntry?.key
         }
 
-        binding.tvDescription.text = entity["description"] ?: "No description available"
+        binding.tvProperties.text = properties.joinToString("\n") {
+            "${it.key.replaceFirstChar { c -> c.uppercase() }}: ${formatValue(it.value)}"
+        }
+
+        binding.tvDescription.text = entity["description"]?.let { formatValue(it) }
+            ?: "No description available"
     }
 
     override fun onDestroyView() {

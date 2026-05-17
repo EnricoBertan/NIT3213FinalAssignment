@@ -9,10 +9,10 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor() : ViewModel() {
 
-    private val _entity = MutableStateFlow<Map<String, String>>(emptyMap())
-    val entity: StateFlow<Map<String, String>> = _entity
+    private val _entity = MutableStateFlow<Map<String, Any>>(emptyMap())
+    val entity: StateFlow<Map<String, Any>> = _entity
 
-    fun setEntity(entity: Map<String, String>) {
+    fun setEntity(entity: Map<String, Any>) {
         _entity.value = entity
     }
 }

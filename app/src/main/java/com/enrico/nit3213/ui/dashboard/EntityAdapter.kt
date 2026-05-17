@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.enrico.nit3213.databinding.ItemEntityBinding
 
 class EntityAdapter(
-    private val onItemClick: (Map<String, String>) -> Unit
-) : ListAdapter<Map<String, String>, EntityAdapter.EntityViewHolder>(DiffCallback()) {
+    private val onItemClick: (Map<String, Any>) -> Unit
+) : ListAdapter<Map<String, Any>, EntityAdapter.EntityViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntityViewHolder {
         val binding = ItemEntityBinding.inflate(
@@ -26,13 +26,33 @@ class EntityAdapter(
         private val binding: ItemEntityBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(entity: Map<String, String>) {
-            val entries = entity.entries.filter { it.key != "description" }
+        fun bind(entity: Map<String, Any>) {
+            android.util.Log.d("ENTITY", "Binding: $entity")
 
-            binding.tvEntityTitle.text = entries.firstOrNull()?.value ?: "Entity"
+            val entries = entity.entries.toList()
 
-            binding.tvEntityProperties.text = entries.drop(1).joinToString("\n") {
-                "${it.key}: ${it.value}"
+            val titleEntry = entries.find { it.key == "event" }
+                ?: entries.find { it.key == "name" }
+                ?: entries.find { it.key == "title" }
+                ?: entries.firstOrNull()
+
+            val titleText = titleEntry?.value?.toString() ?: "Entity"
+            android.util.Log.d("ENTITY", "Title: $titleText")
+
+            binding.tvEntityTitle.text = titleText
+
+            val properties = entries.filter {
+                it.key != "description" && it.key != titleEntry?.key
+            }
+
+            binding.tvEntityProperties.text = properties.joinToString("\n") {
+                val value = it.value
+                val displayValue = if (value is Double && value == value.toLong().toDouble()) {
+                    value.toLong().toString()
+                } else {
+                    value.toString()
+                }
+                "${it.key.replaceFirstChar { c -> c.uppercase() }}: $displayValue"
             }
 
             binding.root.setOnClickListener {
@@ -53,15 +73,15 @@ class EntityAdapter(
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<Map<String, String>>() {
+    class DiffCallback : DiffUtil.ItemCallback<Map<String, Any>>() {
         override fun areItemsTheSame(
-            oldItem: Map<String, String>,
-            newItem: Map<String, String>
+            oldItem: Map<String, Any>,
+            newItem: Map<String, Any>
         ) = oldItem == newItem
 
         override fun areContentsTheSame(
-            oldItem: Map<String, String>,
-            newItem: Map<String, String>
+            oldItem: Map<String, Any>,
+            newItem: Map<String, Any>
         ) = oldItem == newItem
     }
 }
