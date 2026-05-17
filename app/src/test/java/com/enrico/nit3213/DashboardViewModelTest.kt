@@ -39,12 +39,12 @@ class DashboardViewModelTest {
     @Test
     fun `loadDashboard success updates state with entities`() = runTest {
         val entities = listOf(
-            mapOf("name" to "Earth", "type" to "Planet", "description" to "Our home"),
-            mapOf("name" to "Mars", "type" to "Planet", "description" to "Red planet")
+            mapOf("event" to "World War II", "startYear" to 1939, "description" to "A global war"),
+            mapOf("event" to "Cold War", "startYear" to 1947, "description" to "Geopolitical tension")
         )
         coEvery { getDashboardUseCase(any()) } returns DashboardResponse(entities, 2)
 
-        viewModel.loadDashboard("planets")
+        viewModel.loadDashboard("history")
         testDispatcher.scheduler.advanceUntilIdle()
 
         val state = viewModel.dashboardState.value
@@ -56,7 +56,7 @@ class DashboardViewModelTest {
     fun `loadDashboard failure updates state with error`() = runTest {
         coEvery { getDashboardUseCase(any()) } throws Exception("Network error")
 
-        viewModel.loadDashboard("planets")
+        viewModel.loadDashboard("history")
         testDispatcher.scheduler.advanceUntilIdle()
 
         val state = viewModel.dashboardState.value
