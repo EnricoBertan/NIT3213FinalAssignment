@@ -1,6 +1,8 @@
 package com.enrico.nit3213.ui.dashboard
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +26,7 @@ class DashboardFragment : Fragment() {
     private val viewModel: DashboardViewModel by viewModels()
     private lateinit var adapter: EntityAdapter
     private var keypass: String = ""
+    private var allEntities: List<Map<String, String>> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,30 +43,61 @@ class DashboardFragment : Fragment() {
         keypass = arguments?.getString("keypass") ?: ""
 
         setupRecyclerView()
+        setupSearch()
         viewModel.loadDashboard(keypass)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dashboardState.collect { state ->
                 when (state) {
                     is DashboardViewModel.DashboardState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.shimmerLayout.visibility = View.VISIBLE
+                        binding.shimmerLayout.startShimmer()
                         binding.recyclerView.visibility = View.GONE
                         binding.tvError.visibility = View.GONE
+                        binding.tvEntityCount.visibility = View.GONE
+                        binding.tilSearch.visibility = View.GONE
                     }
                     is DashboardViewModel.DashboardState.Success -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
                         binding.recyclerView.visibility = View.VISIBLE
                         binding.tvError.visibility = View.GONE
+                        binding.tvEntityCount.visibility = View.VISIBLE
+                        binding.tilSearch.visibility = View.VISIBLE
+                        allEntities = state.entities
                         adapter.submitList(state.entities)
+                        binding.tvEntityCount.text = "${state.total} entities found"
                     }
                     is DashboardViewModel.DashboardState.Error -> {
-                        binding.progressBar.visibility = View.GONE
+                        binding.shimmerLayout.stopShimmer()
+                        binding.shimmerLayout.visibility = View.GONE
                         binding.recyclerView.visibility = View.GONE
                         binding.tvError.visibility = View.VISIBLE
                         binding.tvError.text = state.message
                     }
                 }
             }
+        }
+    }
+
+    private fun setupSearch() {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterEntities(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun filterEntities(query: String) {
+        if (query.isEmpty()) {
+            adapter.submitList(allEntities)
+        } else {
+            val filtered = allEntities.filter { entity ->
+                entity.values.any { it.contains(query, ignoreCase = true) }
+            }
+            adapter.submitList(filtered)
         }
     }
 

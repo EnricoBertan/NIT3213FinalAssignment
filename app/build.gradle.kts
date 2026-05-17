@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.runtime)
     implementation(libs.hilt.android)
+    implementation(libs.shimmer)
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
