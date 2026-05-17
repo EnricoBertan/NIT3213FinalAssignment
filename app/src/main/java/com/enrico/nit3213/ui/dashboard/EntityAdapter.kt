@@ -29,16 +29,26 @@ class EntityAdapter(
         fun bind(entity: Map<String, String>) {
             val entries = entity.entries.filter { it.key != "description" }
 
-            // First property as title
             binding.tvEntityTitle.text = entries.firstOrNull()?.value ?: "Entity"
 
-            // Remaining properties as summary
             binding.tvEntityProperties.text = entries.drop(1).joinToString("\n") {
                 "${it.key}: ${it.value}"
             }
 
             binding.root.setOnClickListener {
-                onItemClick(entity)
+                it.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(100)
+                    .withEndAction {
+                        it.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start()
+                        onItemClick(entity)
+                    }
+                    .start()
             }
         }
     }
