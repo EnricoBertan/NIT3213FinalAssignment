@@ -44,26 +44,16 @@ Details Screen — displays full entity info
 ## Architecture
 
 This app follows **Clean Architecture** with 3 distinct layers:
-┌─────────────────────────────────────┐
-│           UI Layer                   │
-│  LoginFragment  DashboardFragment   │
-│  DetailsFragment  ViewModels        │
-└────────────────┬────────────────────┘
-│
-┌────────────────▼────────────────────┐
-│           Domain Layer               │
-│  LoginUseCase  GetDashboardUseCase  │
-│  AuthRepository  DashboardRepository│
-│  (interfaces)                        │
-└────────────────┬────────────────────┘
-│
-┌────────────────▼────────────────────┐
-│           Data Layer                 │
-│  AuthRepositoryImpl                 │
-│  DashboardRepositoryImpl            │
-│  ApiService (Retrofit)              │
-│  NetworkModule  RepositoryModule    │
-└─────────────────────────────────────┘
+
+**UI Layer** → LoginFragment, DashboardFragment, DetailsFragment, ViewModels
+
+**Domain Layer** → LoginUseCase, GetDashboardUseCase, Repository Interfaces
+
+**Data Layer** → AuthRepositoryImpl, DashboardRepositoryImpl, ApiService, Hilt Modules
+
+The data flows like this:
+
+**Fragment → ViewModel → UseCase → Repository → ApiService → Server**
 ---
 
 ## Features
@@ -106,19 +96,22 @@ This app follows **Clean Architecture** with 3 distinct layers:
 ---
 
 ## Project Structure
-com.enrico.nit3213
-├── data
-│   ├── model           # LoginRequest, LoginResponse, DashboardResponse
-│   ├── network         # ApiService (Retrofit interface), RetrofitInstance
-│   └── repository      # AuthRepositoryImpl, DashboardRepositoryImpl
-├── domain
-│   ├── repository      # AuthRepository, DashboardRepository (interfaces)
-│   └── usecase         # LoginUseCase, GetDashboardUseCase
-├── ui
-│   ├── login           # LoginFragment, LoginViewModel
-│   ├── dashboard       # DashboardFragment, DashboardViewModel, EntityAdapter
-│   └── details         # DetailsFragment, DetailsViewModel
-└── di                  # NetworkModule, RepositoryModule (Hilt)
+
+**data/**
+- model → LoginRequest, LoginResponse, DashboardResponse
+- network → ApiService, RetrofitInstance
+- repository → AuthRepositoryImpl, DashboardRepositoryImpl
+
+**domain/**
+- repository → AuthRepository, DashboardRepository (interfaces)
+- usecase → LoginUseCase, GetDashboardUseCase
+
+**ui/**
+- login → LoginFragment, LoginViewModel
+- dashboard → DashboardFragment, DashboardViewModel, EntityAdapter
+- details → DetailsFragment, DetailsViewModel
+
+**di/** → NetworkModule, RepositoryModule
 ---
 
 ## Dependency Injection
@@ -238,15 +231,18 @@ Or via terminal:
 
 ## Git Commit History
 
-| # | Commit | Description |
-|---|---|---|
-| 1 | `Initial project setup` | Base Android project |
-| 2 | `Add data models, API service, repository layer, and Hilt DI modules` | Core architecture |
-| 3 | `Complete NIT3213 Final Assignment` | All screens and navigation |
-| 4 | `Add use cases to domain layer and update ViewModels and unit tests` | Clean Architecture |
-| 5 | `Add Neon Noir dark theme and color palette` | UI theming |
-| 6 | `Redesign Login screen with Neon Noir UI` | Login polish |
-| 7 | `Add card press animation and ripple effect to RecyclerView items` | Interactivity |
-| 8 | `Add comprehensive README` | Documentation |
-| 9 | `Fix entity display with Map<String, Any>` | Bug fix |
-| 10 | `Update unit tests to use Map<String, Any>` | Test update |
+| # | Commit Message |
+|---|---|
+| 1 | `Initial project setup` |
+| 2 | `Add data models, API service, repository layer, and Hilt DI modules` |
+| 3 | `Complete NIT3213 Final Assignment` |
+| 4 | `Add use cases to domain layer and update ViewModels and unit tests` |
+| 5 | `Add Neon Noir dark theme and color palette` |
+| 6 | `Redesign Login screen with Neon Noir UI` |
+| 7 | `Add card press animation and ripple effect to RecyclerView items` |
+| 8 | `Add comprehensive README with setup instructions and project overview` |
+| 9 | `Fix entity display with Map<String, Any> and update RecyclerView card layout` |
+| 10 | `Merge branch 'main'` |
+| 11 | `Update unit tests to use Map<String, Any> for entity data` |
+| 12 | `Improve README with architecture diagram, badges and API examples` |
+| 13 | `Fix README architecture and project structure formatting` |
