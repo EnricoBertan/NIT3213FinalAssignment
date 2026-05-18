@@ -247,3 +247,6 @@ Or via terminal:
 | 12 | `Improve README with architecture diagram, badges and API examples` |
 | 13 | `Fix README architecture and project structure formatting` |
 | 14 | `Final submission - fully working app with Neon Noir theme` |
+| 15 | `Merge branch 'main'` |
+| 16 | `Merge branch 'main'` |
+| 17 | `Update README commit history to reflect all 17 commits` |
