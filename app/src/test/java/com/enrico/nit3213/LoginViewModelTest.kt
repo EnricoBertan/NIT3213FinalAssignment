@@ -38,7 +38,7 @@ class LoginViewModelTest {
 
     @Test
     fun `login with empty username shows error`() = runTest {
-        viewModel.login("", "Enrico")
+        viewModel.login("", "Enrico Bertan")
         val state = viewModel.loginState.value
         assertTrue(state is LoginViewModel.LoginState.Error)
     }
@@ -53,7 +53,7 @@ class LoginViewModelTest {
     @Test
     fun `login success updates state with keypass`() = runTest {
         coEvery { loginUseCase(any(), any()) } returns LoginResponse("planets")
-        viewModel.login("s8164431", "Enrico")
+        viewModel.login("s8164431", "Enrico Bertan")
         testDispatcher.scheduler.advanceUntilIdle()
         val state = viewModel.loginState.value
         assertTrue(state is LoginViewModel.LoginState.Success)
@@ -63,7 +63,7 @@ class LoginViewModelTest {
     @Test
     fun `login failure updates state with error`() = runTest {
         coEvery { loginUseCase(any(), any()) } throws Exception("Unauthorized")
-        viewModel.login("s8164431", "Enrico")
+        viewModel.login("s8164431", "Enrico Bertan")
         testDispatcher.scheduler.advanceUntilIdle()
         val state = viewModel.loginState.value
         assertTrue(state is LoginViewModel.LoginState.Error)
